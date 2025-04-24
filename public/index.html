@@ -1,19 +1,79 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ChatGPT 聊天室</title>
   <style>
-    body { font-family: sans-serif; padding: 2rem; max-width: 600px; margin: auto; }
-    .chat-box { border: 1px solid #ccc; padding: 1rem; height: 300px; overflow-y: scroll; margin-bottom: 1rem; }
-    .input-box { display: flex; gap: 0.5rem; }
-    input { flex: 1; padding: 0.5rem; }
-    #modelInfo { color: gray; margin-bottom: 1rem; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f7f8fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    header {
+      background: #ffffff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      padding: 1rem 2rem;
+      font-size: 1.25rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid #eaeaea;
+    }
+    .model {
+      font-size: 0.875rem;
+      color: #888;
+      margin-left: auto;
+    }
+    .chat-box {
+      flex: 1;
+      padding: 1rem 2rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .message {
+      white-space: pre-wrap;
+    }
+    .input-box {
+      padding: 1rem 2rem;
+      background: #fff;
+      display: flex;
+      gap: 0.5rem;
+      border-top: 1px solid #eaeaea;
+    }
+    input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+    button {
+      padding: 0.75rem 1.25rem;
+      background: #10a37f;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0e8f6d;
+    }
   </style>
 </head>
 <body>
-  <h1>🧠 ChatGPT 聊天室</h1>
-  <div id="modelInfo">模型：尚未取得</div>
+  <header>
+    🧠 ChatGPT 聊天室
+    <span class="model" id="model"></span>
+  </header>
   <div class="chat-box" id="chat"></div>
   <div class="input-box">
     <input id="userInput" placeholder="輸入訊息..." />
@@ -27,7 +87,7 @@
       if (!message) return;
 
       const chat = document.getElementById("chat");
-      chat.innerHTML += `<div><strong>你：</strong>${message}</div>`;
+      chat.innerHTML += `<div class='message'><strong>你：</strong>${message}</div>`;
       input.value = "";
 
       const res = await fetch("/api/chat", {
@@ -36,11 +96,8 @@
       });
       const data = await res.json();
 
-      // 更新模型名稱
-      document.getElementById("modelInfo").innerText = `模型：${data.model || "未知"}`;
-
-      // 加入聊天回應
-      chat.innerHTML += `<div><strong>ChatGPT：</strong>${data.reply}</div>`;
+      chat.innerHTML += `<div class='message'><strong>ChatGPT：</strong>${data.reply}</div>`;
+      document.getElementById("model").textContent = `模型：${data.model}`;
       chat.scrollTop = chat.scrollHeight;
     }
   </script>
