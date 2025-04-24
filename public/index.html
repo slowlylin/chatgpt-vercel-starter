@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ChatGPT 聊天室</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; max-width: 600px; margin: auto; }
+    .chat-box { border: 1px solid #ccc; padding: 1rem; height: 300px; overflow-y: scroll; margin-bottom: 1rem; }
+    .input-box { display: flex; gap: 0.5rem; }
+    input { flex: 1; padding: 0.5rem; }
+  </style>
+</head>
+<body>
+  <h1>🧠 ChatGPT 聊天室</h1>
+  <div class="chat-box" id="chat"></div>
+  <div class="input-box">
+    <input id="userInput" placeholder="輸入訊息..." />
+    <button onclick="sendMessage()">送出</button>
+  </div>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById("userInput");
+      const message = input.value.trim();
+      if (!message) return;
+
+      const chat = document.getElementById("chat");
+      chat.innerHTML += `<div><strong>你：</strong>${message}</div>`;
+      input.value = "";
+
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        body: JSON.stringify({ message })
+      });
+      const data = await res.json();
+      chat.innerHTML += `<div><strong>ChatGPT：</strong>${data.reply}</div>`;
+      chat.scrollTop = chat.scrollHeight;
+    }
+  </script>
+</body>
+</html>
