@@ -33,7 +33,9 @@
         body: JSON.stringify({ message })
       });
       const data = await res.json();
-      chat.innerHTML += `<div><strong>ChatGPT：</strong>${data.reply}</div>`;
+
+      // 顯示模型名稱
+      chat.innerHTML += `<div><strong>ChatGPT（${data.model}）：</strong>${data.reply}</div>`;
       chat.scrollTop = chat.scrollHeight;
     }
   </script>
