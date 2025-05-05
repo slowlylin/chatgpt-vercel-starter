@@ -102,15 +102,28 @@
       chat.innerHTML += `<div class='message'><strong>你：</strong>${message}</div>`;
       input.value = "";
 
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        body: JSON.stringify({ message, role })
-      });
-      const data = await res.json();
+      try {
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ message, role })
+        });
 
-      document.getElementById("model").innerText = `模型：${data.model || "未知"}`;
-      chat.innerHTML += `<div class='message'><strong>ChatGPT：</strong>${data.reply}</div>`;
-      chat.scrollTop = chat.scrollHeight;
+        const data = await res.json();
+
+        if (data.error) {
+          chat.innerHTML += `<div class='message'><strong>錯誤：</strong>${data.error}</div>`;
+        } else {
+          document.getElementById("model").innerText = `模型：${data.model || "未知"}`;
+          chat.innerHTML += `<div class='message'><strong>ChatGPT：</strong>${data.reply}</div>`;
+        }
+
+        chat.scrollTop = chat.scrollHeight;
+      } catch (error) {
+        chat.innerHTML += `<div class='message'><strong>錯誤：</strong>無法連接到伺服器</div>`;
+      }
     }
   </script>
 </body>
